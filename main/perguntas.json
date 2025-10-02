@@ -1,0 +1,10 @@
+{
+    "pessoas": [
+            {
+            "campo": "transporte",
+            "pergunta": "Sua casa consome eletricidade? (Sim ou Não): ",
+            "contra_pergunta": "Quantos kWh consome por mês?: ",
+            "calculo_co2": 0.0385
+            }
+        ]
+}
