@@ -1,0 +1,72 @@
+{
+    "pergunta_pessoas": [
+        {
+            "numero_pergunta": 1,
+            "pergunta": "Sua casa consome eletricidade?",
+            "contra_pergunta": "Quantos kWh por mês?",
+            "calculo_co2": 0.0385
+        },
+        {
+            "numero_pergunta": 2,
+            "pergunta": "Você usa gás de cozinha (GLP)?",
+            "contra_pergunta": "Quantos kg por mês?",
+            "calculo_co2": 2.983
+        },
+        {
+            "numero_pergunta": 3,
+            "pergunta": "Você utiliza transporte com combustível fóssil (carro, moto)?",
+            "contra_pergunta": "Quantos litros de combustível por mês (gasolina/diesel)?",
+            "calculo_co2": 2.31
+        },
+        {
+            "numero_pergunta": 4,
+            "pergunta": "Você faz viagens aéreas durante o ano?",
+            "contra_pergunta": "Quantos quilômetros voa por ano?",
+            "calculo_co2": 0.25
+        },
+        {
+            "numero_pergunta": 5,
+            "pergunta": "Você consome carne bovina regularmente?",
+            "contra_pergunta": "Quantos kg de carne bovina por mês?",
+            "calculo_co2": 27
+        }
+    ],
+    "pergunta_empresas": [
+        {
+            "numero_pergunta": 1,
+            "pergunta": "A empresa consome eletricidade?",
+            "contra_pergunta": "Quantos kWh por mês?",
+            "calculo_co2": 0.0385
+        },
+        {
+            "numero_pergunta": 2,
+            "pergunta": "A empresa utiliza combustíveis fósseis em veículos ou geradores?",
+            "contra_pergunta": "Quantos litros de combustível por mês?",
+            "calculo_co2": 2.68
+        },
+        {
+            "numero_pergunta": 3,
+            "pergunta": "A empresa utiliza gás natural ou GLP em processos?",
+            "contra_pergunta": "Quantos kg de gás por mês?",
+            "calculo_co2": 2.983
+        },
+        {
+            "numero_pergunta": 4,
+            "pergunta": "A empresa gera resíduos sólidos?",
+            "contra_pergunta": "Quantos kg de resíduos não recicláveis por mês?",
+            "calculo_co2": 1.5
+        },
+        {
+            "numero_pergunta": 5,
+            "pergunta": "A empresa realiza transporte de produtos ou pessoas?",
+            "contra_pergunta": "Quantos quilômetros percorridos por mês (total da frota)?",
+            "calculo_co2": 0.25
+        },
+        {
+            "numero_pergunta": 6,
+            "pergunta": "A empresa possui sistema de compensação ambiental (plantio, energia solar, etc.)?",
+            "contra_pergunta": "Quantas toneladas de CO₂ são compensadas por mês?",
+            "calculo_co2": -1
+        }
+    ]
+}
