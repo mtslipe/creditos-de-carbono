@@ -57,7 +57,7 @@ def calcular_co2(tipo):
                 return
 
     #conversão para créditos e valores
-    preco_credito = 30  # R$ por crédito | alterar para o mais realista
+    preco_credito = 78.46  # R$ por crédito | alterar para o mais realista
     co2_em_ton = total_co2 / 1000  # kg -> toneladas
     creditos = co2_em_ton  # 1 crédito = 1 tonelada CO₂
     valor_reais = creditos * preco_credito
