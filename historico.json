@@ -1,0 +1,28 @@
+[
+  {
+    "timestamp": "2025-10-29 01:12:01",
+    "tipo": "pessoas",
+    "usuario": "felipe",
+    "total_co2": 716.3969999999999,
+    "creditos": 0.716397,
+    "valor_reais": 56.20850861999999,
+    "mudas": 0.716397,
+    "compensado": false,
+    "projeto": null,
+    "preco_projeto": null,
+    "custo_compensacao": null
+  },
+  {
+    "timestamp": "2025-10-29 01:12:30",
+    "tipo": "pessoas",
+    "usuario": "felipe",
+    "total_co2": 716.3969999999999,
+    "creditos": 0.716397,
+    "valor_reais": 56.20850861999999,
+    "mudas": 0.716397,
+    "compensado": true,
+    "projeto": "Captura de Metano",
+    "preco_projeto": 110.0,
+    "custo_compensacao": 78.80367
+  }
+]
