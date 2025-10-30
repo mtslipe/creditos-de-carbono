@@ -8,19 +8,20 @@ with open('perguntas.json', 'r', encoding='utf-8') as arq:
     vListaPerguntas = json.load(arq)
 
 # customização de tema
-corFundo = "#ffffff"  # Branco puro
-corBtn = "#2e7d32"    # Verde mais escuro
-corFonte = "#ffffff"  # Branco para texto dos botões
-corHover = "#43a047"  # Verde mais claro para hover
-corTexto = "#333333"  # Cinza escuro para textos
-corFrame = "#f8f9fa"  # Cinza bem claro para frames
+corFundo = "#ffffff"  
+corBtn = "#2e7d32"    
+corFonte = "#ffffff"  
+corHover = "#43a047"  
+corTexto = "#333333" 
+corFrame = "#f8f9fa"  
 
-# Adicionar novas cores para a página de cálculo
-corCard = "#ffffff"           # Branco para os cards
-corBorda = "#e0e0e0"         # Cinza claro para bordas
-corPergunta = "#1b5e20"      # Verde escuro para números das perguntas
-corContraPergunta = "#666666" # Cinza para contra-perguntas
-corResultadoFundo = "#f1f8e9" # Verde claro para fundo do resultado
+
+# adicionar novas cores para a página de cálculo
+corCard = "#ffffff"           
+corBorda = "#e0e0e0"         
+corPergunta = "#1b5e20"      
+corContraPergunta = "#666666" 
+corResultadoFundo = "#f1f8e9" 
 
 fonteTitulo = ("Helvetica", 22, "bold")
 fonteLabel = ("Helvetica", 16)
@@ -29,23 +30,25 @@ fonteEntry = ("Helvetica", 16)
 
 usuario = None  
 
-ctk.set_appearance_mode("light") #cor
+ctk.set_appearance_mode("light") # cor
 ctk.set_default_color_theme("green")
 
+# criar janela principal e cabeçalho
 janela = ctk.CTk()
 janela.title("Calculadora de Carbono")
 janela.geometry("900x1000")
 janela.configure(fg_color=corFundo)
 
-# Create header frame
+# criar frame do cabeçalho
 header_frame = ctk.CTkFrame(janela, height=40, fg_color=corBtn)
 header_frame.pack(fill="x", pady=0)
 header_frame.pack_propagate(False)
 
-# Add app name to header (in a container for better alignment)
+# container do cabeçalho (melhor alinhamento)
 header_container = ctk.CTkFrame(header_frame, fg_color="transparent")
 header_container.pack(fill="both", expand=True)
 
+# adicionar nome do app ao cabeçalho (em um container para melhor alinhamento)
 header_label = ctk.CTkLabel(
     header_container, 
     text="Calculadora de Carbono",
@@ -54,7 +57,7 @@ header_label = ctk.CTkLabel(
 )
 header_label.pack(side="left", padx=20)
 
-# Add restart button to header with command
+# botão reiniciar
 restart_btn = ctk.CTkButton(
     header_container,
     text="↺ Reiniciar",
@@ -92,7 +95,7 @@ def salvar_historico(entrada):
     with open(HIST_FILE, 'w', encoding='utf-8') as f:
         json.dump(historico, f, ensure_ascii=False, indent=2)
 
-# Adicionar tipos de projetos com preço e descrição
+# tipos de projetos com preço e descrição
 project_types = {
     "Reflorestamento": {"price": 90.0, "desc": "Plantar árvores para sequestrar CO₂ e restaurar ecossistemas."},
     "Energias Renováveis": {"price": 85.0, "desc": "Investimento em parques eólicos/solar para reduzir emissões."},
@@ -100,7 +103,7 @@ project_types = {
     "Conservação Florestal": {"price": 75.0, "desc": "Proteção de florestas existentes para manter estoques de carbono."}
 }
 
-# variáveis para UI/estado do cálculo
+# variáveis para ui/estado do cálculo
 selected_project_var = None
 project_desc_label = None
 compensation_cost_label = None
@@ -111,9 +114,11 @@ def mostrar_historico(tipo=None):
     for widget in frame_perguntas.winfo_children():
         widget.destroy()
 
+    # container principal do histórico
     container = ctk.CTkFrame(frame_perguntas, fg_color=corFrame, corner_radius=15)
     container.pack(pady=30, padx=50, fill="both", expand=True)
 
+    # título do histórico
     title_label = ctk.CTkLabel(
         container,
         text="Histórico de Cálculos",
@@ -122,6 +127,7 @@ def mostrar_historico(tipo=None):
     )
     title_label.pack(pady=20)
 
+    # área rolável para os registros
     scroll = ctk.CTkScrollableFrame(container, width=750, height=520, fg_color="transparent")
     scroll.pack(pady=10, padx=20, fill="both", expand=True)
 
@@ -151,7 +157,7 @@ def mostrar_historico(tipo=None):
                 texto += f"\nCompensado com: {projeto} — R$ {custo_comp:.2f} (R$ {preco_projeto:.2f}/t)"
             ctk.CTkLabel(card, text=texto, anchor="w", wraplength=680, text_color=corTexto).pack(pady=10, padx=12, anchor="w")
 
-    # ações: Voltar e Limpar Histórico
+    # ações: voltar e limpar histórico
     actions = ctk.CTkFrame(container, fg_color="transparent")
     actions.pack(pady=12)
 
@@ -175,7 +181,7 @@ def mostrar_historico(tipo=None):
     clear_btn = ctk.CTkButton(actions, text="Limpar Histórico", width=160, height=36, fg_color=corBtn, hover_color=corHover, text_color=corFonte, command=limpar)
     clear_btn.pack(side="left", padx=8)
 
-    # Voltar: se chamado a partir de carregar_perguntas passa tipo para retornar à página; senão vai ao menu
+    # voltar: se chamado a partir de carregar_perguntas passa tipo para retornar à página; senão vai ao menu
     def voltar():
         for w in frame_perguntas.winfo_children():
             w.destroy()
@@ -187,19 +193,19 @@ def mostrar_historico(tipo=None):
     back_btn = ctk.CTkButton(actions, text="Voltar", width=120, height=36, fg_color=corBtn, hover_color=corHover, text_color=corFonte, command=voltar)
     back_btn.pack(side="left", padx=8)
 
-#func de navegação
+# func de navegação
 def mostrar_menu():
     frame_perguntas.pack_forget()
     
-    # Limpar frame_menu antes de recriar elementos
+    # limpar frame_menu antes de recriar elementos
     for widget in frame_menu.winfo_children():
         widget.destroy()
     
-    # Container central
+    # container central
     container = ctk.CTkFrame(frame_menu, fg_color=corFrame, corner_radius=20)
     container.pack(pady=100, padx=50)
     
-    # Logo ou ícone
+    # logo ou ícone
     logo_label = ctk.CTkLabel(
         container,
         text="🌱",
@@ -207,7 +213,7 @@ def mostrar_menu():
     )
     logo_label.pack(pady=(30, 0))
     
-    # Boas vindas
+    # boas vindas
     lbl_menu = ctk.CTkLabel(
         container, 
         text=f"Seja Bem-Vindo, {usuario}!", 
@@ -224,7 +230,7 @@ def mostrar_menu():
     )
     lbl_menu2.pack(pady=(0, 30))
 
-    # Botões em um frame transparente
+    # botões em um frame transparente
     buttons_frame = ctk.CTkFrame(container, fg_color="transparent")
     buttons_frame.pack(pady=20, padx=50)
 
@@ -263,7 +269,7 @@ def mostrar_perguntas(tipo):
     frame_perguntas.pack(fill="both", expand=True)
     carregar_perguntas(tipo)
 
-#func para habilitar/desabilitar campo de escrita
+# func para habilitar/desabilitar campo de escrita
 def alternar_campo(valor, entry_widget):
     if valor == "Sim":
         entry_widget.configure(state="normal")
@@ -271,7 +277,7 @@ def alternar_campo(valor, entry_widget):
         entry_widget.delete(0, "end")
         entry_widget.configure(state="disabled")
 
-#func de calcular
+# func de calcular
 def calcular_co2(tipo):
     global ultimo_calculo
     total_co2 = 0
@@ -293,10 +299,10 @@ def calcular_co2(tipo):
                 )
                 return
 
-    #conversão para créditos e valores
-    preco_credito = 78.46  # R$ por crédito | alterar para o mais realista
+    # conversão para créditos e valores
+    preco_credito = 78.46  # r$ por crédito | alterar para o mais realista
     co2_em_ton = total_co2 / 1000  # kg -> toneladas
-    creditos = co2_em_ton  # 1 crédito = 1 tonelada CO₂
+    creditos = co2_em_ton  # 1 crédito = 1 tonelada co₂
     valor_reais = creditos * preco_credito
     mudas = creditos  # 1 crédito = 1 muda
 
@@ -333,7 +339,7 @@ def calcular_co2(tipo):
         text_color="green"
     )
 
-    # Atualizar custo de compensação exibido (se UI presente)
+    # atualizar custo de compensação exibido (se ui presente)
     try:
         if selected_project_var and compensation_cost_label:
             proj = selected_project_var.get()
@@ -385,7 +391,7 @@ def compensar_emissao():
     if resultado_label:
         resultado_label.configure(text=resultado_label.cget("text") + f"\n\nCompensado com: {proj} (R$ {cost:.2f})")
 
-#func para carregar perguntas de forma dinamicamente
+# func para carregar perguntas de forma dinamicamente
 def carregar_perguntas(tipo):
     for widget in frame_perguntas.winfo_children():
         widget.destroy()
@@ -396,7 +402,7 @@ def carregar_perguntas(tipo):
 
     perguntas_lista = vListaPerguntas['pergunta_pessoas'] if tipo == 'pessoas' else vListaPerguntas['pergunta_empresas']
 
-    # Container principal com título
+    # container principal com título
     container = ctk.CTkFrame(frame_perguntas, fg_color=corFrame, corner_radius=15)
     container.pack(pady=30, padx=50, fill="both", expand=True)
 
@@ -428,7 +434,7 @@ def carregar_perguntas(tipo):
         )
         frame.pack(pady=10, padx=10, fill="x")
 
-        # Número da pergunta em verde escuro
+        # número da pergunta em verde escuro
         num_pergunta = ctk.CTkLabel(
             frame,
             text=f"Pergunta {i+1}",
@@ -482,7 +488,7 @@ def carregar_perguntas(tipo):
         entrada_valor.pack(pady=(0,15), padx=20, fill="x")
         entradas.append(entrada_valor)
 
-    # Frame para resultado com fundo destacado
+    # frame para resultado com fundo destacado
     result_frame = ctk.CTkFrame(container, fg_color=corResultadoFundo, corner_radius=10)
     result_frame.pack(pady=12, padx=30, fill="x")
 
@@ -495,7 +501,7 @@ def carregar_perguntas(tipo):
     )
     resultado_label.pack(pady=12)
 
-    # adiciona UI de opções de compensação logo abaixo do resultado (antes dos botões)
+    # adiciona ui de opções de compensação logo abaixo do resultado (antes dos botões)
     global selected_project_var, project_desc_label, compensation_cost_label
 
     comp_frame = ctk.CTkFrame(container, fg_color="transparent")
@@ -503,7 +509,7 @@ def carregar_perguntas(tipo):
 
     ctk.CTkLabel(comp_frame, text="Opções de compensação:", font=ctk.CTkFont("Helvetica", 14, "bold"), text_color=corTexto).pack(anchor="w", padx=10)
 
-    # OptionMenu para escolher projeto (largura controlada)
+    # optionmenu para escolher projeto (largura controlada)
     selected_project_var = ctk.StringVar(value=list(project_types.keys())[0])
     option = ctk.CTkOptionMenu(comp_frame, values=list(project_types.keys()), variable=selected_project_var,
                                width=360,
@@ -533,7 +539,7 @@ def carregar_perguntas(tipo):
     compensar_btn = ctk.CTkButton(comp_frame, text="Compensar Emissões", width=200, height=40, fg_color="#6aa84f", hover_color="#7fc77a", text_color=corFonte, command=compensar_emissao)
     compensar_btn.pack(anchor="e", pady=(5,0), padx=10)
 
-    # Frame para botões (abaixo da área de compensação)
+    # frame para botões (abaixo da área de compensação)
     button_frame = ctk.CTkFrame(container, fg_color="transparent")
     button_frame.pack(pady=10)
 
@@ -586,19 +592,19 @@ def mostrar_login():
     login_frame = ctk.CTkFrame(janela, fg_color=corFundo)
     login_frame.pack(fill="both", expand=True)
     
-    # Container central
+    # container central
     container = ctk.CTkFrame(login_frame, fg_color=corFrame, corner_radius=20)
     container.pack(pady=100, padx=50)
     
-    # Logo ou ícone
+    # logo ou ícone
     logo_label = ctk.CTkLabel(
         container,
-        text="🌱",  # Emoji como logo
+        text="🌱",  # emoji como logo
         font=ctk.CTkFont(size=50)
     )
     logo_label.pack(pady=(30, 0))
     
-    # Título de boas-vindas
+    # título de boas-vindas
     title_label = ctk.CTkLabel(
         container,
         text="Calculadora de Carbono",
@@ -615,7 +621,7 @@ def mostrar_login():
     )
     subtitle_label.pack(pady=(0, 20))
     
-    # Frame para entrada do nome
+    # frame para entrada do nome
     entry_frame = ctk.CTkFrame(container, fg_color="transparent")
     entry_frame.pack(pady=20, padx=50)
     
@@ -630,7 +636,7 @@ def mostrar_login():
     )
     name_entry.pack()
     
-    # Label para mensagem de erro
+    # label para mensagem de erro
     error_label = ctk.CTkLabel(
         container,
         text="",
@@ -655,7 +661,7 @@ def mostrar_login():
         login_frame.destroy()
         mostrar_menu()
     
-    # Botão de continuar
+    # botão de continuar
     continue_btn = ctk.CTkButton(
         container,
         text="Começar",
@@ -670,10 +676,10 @@ def mostrar_login():
     )
     continue_btn.pack(pady=30)
     
-    # Vincular a tecla Enter ao botão de continuar
+    # vincular a tecla enter ao botão de continuar
     name_entry.bind("<Return>", lambda event: validar_e_continuar())
     
-    # Dar foco ao campo de entrada
+    # dar foco ao campo de entrada
     name_entry.focus()
 
 # função para reiniciar o aplicativo
@@ -682,7 +688,7 @@ def reiniciar_app():
         global usuario, entradas, escolhas, selected_project_var, project_desc_label
         global compensation_cost_label, ultimo_calculo, frame_menu, frame_perguntas
         
-        # Reset globals
+        # resetar variáveis globais
         usuario = None
         entradas = []
         escolhas = []
@@ -691,24 +697,24 @@ def reiniciar_app():
         compensation_cost_label = None 
         ultimo_calculo = None
 
-        # Destroy all widgets except header
+        # destruir todos os widgets exceto o cabeçalho
         for widget in janela.winfo_children():
             if widget != header_frame:
                 widget.destroy()
                 
-        # Recreate main frames
+        # recriar frames principais
         frame_menu = ctk.CTkFrame(janela, fg_color=corFundo)
         frame_perguntas = ctk.CTkFrame(janela, fg_color=corFundo)
         
-        # Restart from login
+        # reiniciar no login
         mostrar_login()
 
-# Move frames creation to the end, just before mostrar_login()
+# criar frames principais (garantia de existência)
 frame_menu = ctk.CTkFrame(janela, fg_color=corFundo)
 frame_perguntas = ctk.CTkFrame(janela, fg_color=corFundo)
 
-# Mostrar tela de login inicial
+# mostrar a tela de login inicial
 mostrar_login()
 
-# Loop principal
+# loop principal
 janela.mainloop()
