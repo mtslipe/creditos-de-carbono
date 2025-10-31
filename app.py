@@ -396,14 +396,21 @@ def carregar_perguntas(tipo):
     for widget in frame_perguntas.winfo_children():
         widget.destroy()
 
+    # criar scroll principal para toda a tela
+    main_scroll = ctk.CTkScrollableFrame(
+        frame_perguntas,
+        fg_color=corFundo,
+    )
+    main_scroll.pack(fill="both", expand=True)
+
     global entradas, escolhas
     entradas = []
     escolhas = []
 
     perguntas_lista = vListaPerguntas['pergunta_pessoas'] if tipo == 'pessoas' else vListaPerguntas['pergunta_empresas']
 
-    # container principal com título
-    container = ctk.CTkFrame(frame_perguntas, fg_color=corFrame, corner_radius=15)
+    # container principal com título (agora dentro do main_scroll)
+    container = ctk.CTkFrame(main_scroll, fg_color=corFrame, corner_radius=15)
     container.pack(pady=30, padx=50, fill="both", expand=True)
 
     titulo = "Cálculo de Emissão de Carbono para " + ("Pessoas" if tipo == "pessoas" else "Empresas")
