@@ -55,13 +55,6 @@ python app.py
 5. **Compense**: Escolha um projeto e registre sua compensação
 6. **Histórico**: Acesse seus cálculos e compensações anteriores
 
-## Projetos de Compensação
-
-- **Reflorestamento**: R$ 90,00/tCO₂
-- **Energias Renováveis**: R$ 85,00/tCO₂
-- **Captura de Metano**: R$ 110,00/tCO₂
-- **Conservação Florestal**: R$ 75,00/tCO₂
-
 ## Estrutura do Projeto
 
 ```
