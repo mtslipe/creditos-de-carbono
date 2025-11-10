@@ -393,26 +393,29 @@ def compensar_emissao():
 
 # func para carregar perguntas de forma dinamicamente
 def carregar_perguntas(tipo):
+    # Limpa toda a área de perguntas
     for widget in frame_perguntas.winfo_children():
         widget.destroy()
 
-    # criar scroll principal para toda a tela
-    main_scroll = ctk.CTkScrollableFrame(
-        frame_perguntas,
-        fg_color=corFundo,
-    )
-    main_scroll.pack(fill="both", expand=True)
+    # Wrapper da página para centralização via grid
+    page = ctk.CTkFrame(frame_perguntas, fg_color=corFundo)
+    page.pack(fill="both", expand=True)
+    page.grid_columnconfigure(0, weight=1)
+    page.grid_rowconfigure(0, weight=1)
 
-    global entradas, escolhas
-    entradas = []
-    escolhas = []
+    # Content central (não expande em largura total)
+    content = ctk.CTkFrame(page, fg_color="transparent")
+    content.grid(row=0, column=0, sticky="n", padx=24, pady=(24, 12))
 
-    perguntas_lista = vListaPerguntas['pergunta_pessoas'] if tipo == 'pessoas' else vListaPerguntas['pergunta_empresas']
+    # Container com largura máxima e cantos arredondados
+    container = ctk.CTkFrame(content, fg_color=corFrame, corner_radius=15, width=900)
+    container.pack(anchor="n", pady=6, padx=6, fill="both", expand=True)
+    # Define layout em duas colunas: esquerda perguntas, direita resumo/compensação/ações
+    container.grid_columnconfigure(0, weight=3)  # coluna perguntas
+    container.grid_columnconfigure(1, weight=2)  # coluna lateral
+    container.grid_rowconfigure(1, weight=1)     # área de perguntas com scroll ocupa o restante
 
-    # container principal com título (agora dentro do main_scroll)
-    container = ctk.CTkFrame(main_scroll, fg_color=corFrame, corner_radius=15)
-    container.pack(pady=30, padx=50, fill="both", expand=True)
-
+    # Título (linha 0, ocupa as duas colunas)
     titulo = "Cálculo de Emissão de Carbono para " + ("Pessoas" if tipo == "pessoas" else "Empresas")
     title_label = ctk.CTkLabel(
         container,
@@ -420,141 +423,173 @@ def carregar_perguntas(tipo):
         font=ctk.CTkFont("Helvetica", 24, "bold"),
         text_color=corPergunta
     )
-    title_label.pack(pady=20)
+    title_label.grid(row=0, column=0, columnspan=2, pady=(18, 6), padx=18, sticky="n")
 
-    # reduzir altura do scroll para reservar espaço para compensação e botões
-    scroll_frame = ctk.CTkScrollableFrame(
-        container, 
-        width=750,
-        height=380,  # reduzido de 500 para 380
-        fg_color="transparent"
+    # Coluna esquerda: perguntas com scroll
+    perguntas_col = ctk.CTkScrollableFrame(
+        container,
+        fg_color=corCard,
+        width=560,
+        height=560,
+        corner_radius=12
     )
-    scroll_frame.pack(pady=20, padx=30, fill="both", expand=False)
+    perguntas_col.grid(row=1, column=0, sticky="nsew", padx=(18, 9), pady=(6, 18))
 
+    # Coluna direita: sidebar fixa com Resultado + Compensação + Ações
+    sidebar = ctk.CTkFrame(container, fg_color=corCard, corner_radius=12)
+    sidebar.grid(row=1, column=1, sticky="nsew", padx=(9, 18), pady=(6, 18))
+    sidebar.grid_columnconfigure(0, weight=1)
+
+    # Estado local das listas
+    global entradas, escolhas
+    entradas = []
+    escolhas = []
+
+    perguntas_lista = vListaPerguntas['pergunta_pessoas'] if tipo == 'pessoas' else vListaPerguntas['pergunta_empresas']
+
+    # Cards de perguntas na coluna esquerda
     for i, pergunta in enumerate(perguntas_lista):
-        frame = ctk.CTkFrame(
-            scroll_frame, 
+        card = ctk.CTkFrame(
+            perguntas_col,
             fg_color=corCard,
             corner_radius=10,
             border_width=1,
             border_color=corBorda
         )
-        frame.pack(pady=10, padx=10, fill="x")
+        card.pack(pady=10, padx=12, fill="x")
 
-        # número da pergunta em verde escuro
         num_pergunta = ctk.CTkLabel(
-            frame,
+            card,
             text=f"Pergunta {i+1}",
             font=ctk.CTkFont("Helvetica", 12, "bold"),
             text_color=corPergunta
         )
-        num_pergunta.pack(pady=(15,5), padx=20, anchor="w")
+        num_pergunta.pack(pady=(12, 4), padx=16, anchor="w")
 
         lbl = ctk.CTkLabel(
-            frame,
+            card,
             text=pergunta["pergunta"],
             anchor="w",
-            wraplength=650,
+            wraplength=520,
             font=ctk.CTkFont(size=14),
             text_color=corTexto
         )
-        lbl.pack(pady=(0,10), padx=20, anchor="w")
+        lbl.pack(pady=(0, 8), padx=16, anchor="w")
 
-        frame_botoes = ctk.CTkFrame(frame, fg_color="transparent")
-        frame_botoes.pack(pady=5, anchor="w", padx=20)
+        botoes = ctk.CTkFrame(card, fg_color="transparent")
+        botoes.pack(pady=4, padx=16, anchor="w")
 
         escolha_var = ctk.StringVar(value="Não")
         escolhas.append(escolha_var)
 
-        btn_sim = ctk.CTkRadioButton(frame_botoes, text="Sim", variable=escolha_var, value="Sim",
-                                     command=lambda v="Sim", i=i: alternar_campo(v, entradas[i]))
-        btn_nao = ctk.CTkRadioButton(frame_botoes, text="Não", variable=escolha_var, value="Não",
-                                     command=lambda v="Não", i=i: alternar_campo(v, entradas[i]))
-        btn_sim.pack(side="left", padx=(0,20))
+        btn_sim = ctk.CTkRadioButton(
+            botoes, text="Sim", variable=escolha_var, value="Sim",
+            command=lambda v="Sim", idx=i: alternar_campo(v, entradas[idx])
+        )
+        btn_nao = ctk.CTkRadioButton(
+            botoes, text="Não", variable=escolha_var, value="Não",
+            command=lambda v="Não", idx=i: alternar_campo(v, entradas[idx])
+        )
+        btn_sim.pack(side="left", padx=(0, 20))
         btn_nao.pack(side="left")
 
         if pergunta["contra_pergunta"]:
             lbl_contra = ctk.CTkLabel(
-                frame,
+                card,
                 text=pergunta["contra_pergunta"],
                 anchor="w",
-                wraplength=650,
+                wraplength=520,
                 font=ctk.CTkFont(size=13, slant="italic"),
                 text_color=corContraPergunta
             )
-            lbl_contra.pack(pady=(5,10), padx=20, anchor="w")
+            lbl_contra.pack(pady=(4, 10), padx=16, anchor="w")
 
         entrada_valor = ctk.CTkEntry(
-            frame,
+            card,
             placeholder_text="Digite o valor aqui...",
             state="disabled",
-            height=35,
+            height=36,
             font=ctk.CTkFont(size=13),
             corner_radius=8
         )
-        entrada_valor.pack(pady=(0,15), padx=20, fill="x")
+        entrada_valor.pack(pady=(0, 14), padx=16, fill="x")
         entradas.append(entrada_valor)
 
-    # frame para resultado com fundo destacado
-    result_frame = ctk.CTkFrame(container, fg_color=corResultadoFundo, corner_radius=10)
-    result_frame.pack(pady=12, padx=30, fill="x")
-
+    # Sidebar: Resultado
+    result_frame = ctk.CTkFrame(sidebar, fg_color=corResultadoFundo, corner_radius=10)
+    result_frame.grid(row=0, column=0, sticky="ew", padx=16, pady=(16, 10))
     global resultado_label
     resultado_label = ctk.CTkLabel(
         result_frame,
         text="",
         font=ctk.CTkFont(size=16, weight="bold"),
-        wraplength=650
+        wraplength=360,
+        justify="left"
     )
-    resultado_label.pack(pady=12)
+    resultado_label.pack(padx=12, pady=10, anchor="w")
 
-    # adiciona ui de opções de compensação logo abaixo do resultado (antes dos botões)
+    # Sidebar: Compensação
     global selected_project_var, project_desc_label, compensation_cost_label
+    comp_frame = ctk.CTkFrame(sidebar, fg_color="transparent")
+    comp_frame.grid(row=1, column=0, sticky="ew", padx=16, pady=(4, 10))
 
-    comp_frame = ctk.CTkFrame(container, fg_color="transparent")
-    comp_frame.pack(pady=(6,12), padx=30, fill="x")
+    ctk.CTkLabel(
+        comp_frame,
+        text="Opções de compensação:",
+        font=ctk.CTkFont("Helvetica", 14, "bold"),
+        text_color=corTexto
+    ).pack(anchor="w", padx=6, pady=(2, 6))
 
-    ctk.CTkLabel(comp_frame, text="Opções de compensação:", font=ctk.CTkFont("Helvetica", 14, "bold"), text_color=corTexto).pack(anchor="w", padx=10)
-
-    # optionmenu para escolher projeto (largura controlada)
     selected_project_var = ctk.StringVar(value=list(project_types.keys())[0])
-    option = ctk.CTkOptionMenu(comp_frame, values=list(project_types.keys()), variable=selected_project_var,
-                               width=360,
-                               command=lambda v: update_project_info(v))
-    option.pack(anchor="w", pady=8, padx=10)
+    option = ctk.CTkOptionMenu(
+        comp_frame,
+        values=list(project_types.keys()),
+        variable=selected_project_var,
+        width=320,
+        command=lambda v: update_project_info(v)
+    )
+    option.pack(anchor="w", padx=6, pady=(0, 8))
 
-    project_desc_label = ctk.CTkLabel(comp_frame, text=project_types[selected_project_var.get()]["desc"], wraplength=700, text_color=corTexto)
-    project_desc_label.pack(anchor="w", padx=10, pady=(0,8))
+    project_desc_label = ctk.CTkLabel(
+        comp_frame,
+        text=project_types[selected_project_var.get()]["desc"],
+        wraplength=360,
+        text_color=corTexto,
+        justify="left"
+    )
+    project_desc_label.pack(anchor="w", padx=6, pady=(0, 8))
 
-    compensation_cost_label = ctk.CTkLabel(comp_frame, text="Custo para compensação: —", font=ctk.CTkFont("Helvetica", 13, "bold"), text_color=corTexto)
-    compensation_cost_label.pack(anchor="w", padx=10, pady=(0,8))
+    compensation_cost_label = ctk.CTkLabel(
+        comp_frame,
+        text="Custo para compensação: —",
+        font=ctk.CTkFont("Helvetica", 13, "bold"),
+        text_color=corTexto
+    )
+    compensation_cost_label.pack(anchor="w", padx=6, pady=(0, 8))
 
-    # função auxiliar para atualizar descrição/custo quando mudar seleção
+    # Atualizador da seleção de projeto
     def update_project_info(proj_name):
         if project_desc_label:
             project_desc_label.configure(text=project_types[proj_name]["desc"])
-        # se já houver um cálculo, atualiza custo mostrado
         try:
             if ultimo_calculo:
                 price = project_types[proj_name]["price"]
                 cost = ultimo_calculo["creditos"] * price
-                compensation_cost_label.configure(text=f"Custo para compensar com '{proj_name}': R$ {cost:.2f} (R$ {price:.2f}/t)")
+                compensation_cost_label.configure(
+                    text=f"Custo para compensar com '{proj_name}': R$ {cost:.2f} (R$ {price:.2f}/t)"
+                )
         except Exception:
             pass
 
-    # botão de compensar (usa ultimo_calculo)
-    compensar_btn = ctk.CTkButton(comp_frame, text="Compensar Emissões", width=200, height=40, fg_color="#6aa84f", hover_color="#7fc77a", text_color=corFonte, command=compensar_emissao)
-    compensar_btn.pack(anchor="e", pady=(5,0), padx=10)
-
-    # frame para botões (abaixo da área de compensação)
-    button_frame = ctk.CTkFrame(container, fg_color="transparent")
-    button_frame.pack(pady=10)
+    # Sidebar: Ações (Calcular, Histórico, Voltar, Compensar)
+    actions = ctk.CTkFrame(sidebar, fg_color="transparent")
+    actions.grid(row=2, column=0, sticky="ew", padx=16, pady=(6, 16))
+    actions.grid_columnconfigure(0, weight=1)
 
     btn_calcular = ctk.CTkButton(
-        button_frame, 
+        actions,
         text="Calcular Emissão de CO₂",
-        width=250,
-        height=45,
+        height=44,
         font=fonteBtn,
         fg_color=corBtn,
         hover_color=corHover,
@@ -562,36 +597,43 @@ def carregar_perguntas(tipo):
         corner_radius=10,
         command=lambda t=tipo: calcular_co2(t)
     )
-    btn_calcular.pack(side="left", padx=10)
+    btn_calcular.grid(row=0, column=0, sticky="ew", pady=(0, 8))
 
-    btn_voltar = ctk.CTkButton(
-        button_frame,
-        text="Voltar",
-        width=150,
-        height=45,
-        font=fonteBtn,
-        fg_color=corBtn,
-        hover_color=corHover,
-        text_color=corFonte,
-        corner_radius=10,
-        command=mostrar_menu
-    )
-    btn_voltar.pack(side="left", padx=10)
-
-    # novo: botão para abrir histórico (passa o tipo atual)
     btn_historico = ctk.CTkButton(
-        button_frame,
+        actions,
         text="Ver Histórico",
-        width=150,
-        height=45,
-        font=fonteBtn,
+        height=40,
         fg_color="#6aa84f",
         hover_color="#7fc77a",
         text_color=corFonte,
         corner_radius=10,
         command=lambda: mostrar_historico(tipo)
     )
-    btn_historico.pack(side="left", padx=10)
+    btn_historico.grid(row=1, column=0, sticky="ew", pady=(0, 8))
+
+    btn_voltar = ctk.CTkButton(
+        actions,
+        text="Voltar",
+        height=40,
+        fg_color=corBtn,
+        hover_color=corHover,
+        text_color=corFonte,
+        corner_radius=10,
+        command=mostrar_menu
+    )
+    btn_voltar.grid(row=2, column=0, sticky="ew", pady=(0, 8))
+
+    compensar_btn = ctk.CTkButton(
+        actions,
+        text="Compensar Emissões",
+        height=44,
+        fg_color="#6aa84f",
+        hover_color="#7fc77a",
+        text_color=corFonte,
+        corner_radius=10,
+        command=compensar_emissao
+    )
+    compensar_btn.grid(row=3, column=0, sticky="ew")
 
 def mostrar_login():
     frame_menu.pack_forget()
