@@ -304,7 +304,7 @@ def calcular_co2(tipo):
     co2_em_ton = total_co2 / 1000  # kg -> toneladas
     creditos = co2_em_ton  # 1 crédito = 1 tonelada co₂
     valor_reais = creditos * preco_credito
-    mudas = creditos  # 1 crédito = 1 muda
+    mudas = int(creditos)  # 1 crédito = 1 muda / valor inteiro pq nn existe meia muda :)
 
     # salvar no histórico (agora inclui o usuário - registro base do cálculo)
     entry = {
